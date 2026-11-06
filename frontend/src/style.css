@@ -10,3 +10,6 @@
 .player-question p{margin:7px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .player-question small{display:block;margin-top:8px;color:#8eb9d0;font-size:10px}
 .transcript .answer{margin-right:15%;overflow-wrap:anywhere}
+
+/* v0.5 witness state (server-authoritative) */
+.character-intel{background:#1b2c3a;border:1px solid #34536a;border-radius:7px;padding:16px 18px;margin:18px 0 12px}.intel-head{display:flex;align-items:center;justify-content:space-between;color:#8fcce8;font:11px 'Space Mono';margin-bottom:15px}.intel-head span{color:#83cfae}.intel-row{display:flex;align-items:center;gap:12px;margin:9px 0}.intel-row label{width:65px;margin:0;color:#9cb4c7;font:10px 'Space Mono'}.intel-row>span{width:42px;text-align:right;color:#b7cbda;font:11px 'Space Mono'}.intel-track{height:6px;border-radius:8px;background:#344758;overflow:hidden;flex:1}.intel-track>div{height:100%;background:#6bc9aa;transition:width .2s}.intel-track.pressure>div{background:#e1a66b}.character-intel small{display:block;margin-top:14px;color:#8299aa;line-height:1.5;font-size:11px}
