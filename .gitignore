@@ -1,12 +1,10 @@
-node_modules/
-dist/
-.venv/
-__pycache__/
-.pytest_cache/
-*.pyc
 .env
 .env.*
 !.env.example
 *.db
 *.sqlite
 *.sqlite3
+node_modules/
+dist/
+.venv/
+__pycache__/
