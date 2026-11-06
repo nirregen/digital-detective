@@ -87,3 +87,9 @@ If you use a different installed model, change `OLLAMA_MODEL` in `docker-compose
 The dialogue adapter requests Ollama's native `/api/chat` endpoint with `think: false`, `keep_alive: 30m`, `num_predict: 75`, and `num_ctx: 2048`. It sends `/no_think` for Qwen3, ignores the `message.thinking` field, rejects obvious planning text, and uses the scripted fallback when the reply cannot be safely displayed. This is a best-effort guard, not a guarantee against all accidental reveals. Dialogue generation does not change case rules.
 
 After changing backend files, rebuild: `docker compose up --build -d`, then open http://localhost:5173. To inspect backend errors: `docker compose logs -f backend`. To check whether Ollama is running on GPU: `ollama ps` in Windows terminal.
+
+## Version 0.4 — persistent interview history
+
+The interrogation view now renders previously saved `state.interviews` separately for each character, so changing tabs, characters, or refreshing the page no longer removes the visible history. Existing interviews are loaded through `GET /api/state` using the browser's persistent session ID. The SQLite database lives in the named Docker volume `detective-data`, so avoid running `docker compose down -v` unless you intentionally want to erase progress. The Compose default model is now `qwen2.5:3b`; change it to your installed model if needed.
+
+To update an existing installation, copy the files over the old working tree (back it up first), then run `docker compose up -d --build`. Don't delete Docker volumes.
