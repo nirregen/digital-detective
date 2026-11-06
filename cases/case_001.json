@@ -1,0 +1,26 @@
+{
+  "id": "case_001",
+  "title": "The Last Message",
+  "tagline": "A missing engineer. A resignation nobody believes. A server that remembers.",
+  "intro": "At 20:05, engineer Maya Levin supposedly resigned from Northstar Systems. By morning she had vanished. A colleague has asked you to investigate. You have a limited archive of documents and access to three witnesses.",
+  "characters": [
+    {"id":"alex","name":"Alex Morgan","role":"Security Manager","opening":"I left at 20:00. I didn't see Maya after that."},
+    {"id":"dana","name":"Dana Cho","role":"Data Analyst","opening":"Maya thought someone was changing the audit reports. I was afraid to get involved."},
+    {"id":"leon","name":"Leon Vale","role":"CTO","opening":"Maya resigned. The email is plain enough. Please don't invent a conspiracy."}
+  ],
+  "evidence": [
+    {"id":"e01","title":"Resignation Email","kind":"email","content":"20:05 — From Maya: I resign effective immediately. Please do not contact me.","requires":[]},
+    {"id":"e03","title":"Hallway Camera Still","kind":"image transcript","content":"21:40 — Two figures leave through the service stairwell. The image is too blurry for identification.","requires":[]},
+    {"id":"e04","title":"Maya's Desk Note","kind":"note","content":"A scribble reads: 'Old-school rotation, thirteen steps.' Underneath: PURPX GUR ONPXHC.","requires":[]},
+    {"id":"e07","title":"Alex's Initial Statement","kind":"statement","content":"Alex: 'I left the building at 20:00 and never returned that night.'","requires":[]},
+    {"id":"e02","title":"Access Control Log","kind":"server log","content":"22:14 — Alex Morgan's badge entered the server room.","requires":["decrypt"]},
+    {"id":"e05","title":"Backup Manifest","kind":"file","content":"22:18 — Encrypted audit snapshot copied to an offline backup device.","requires":["decrypt"]},
+    {"id":"e06","title":"Audit Diff","kind":"forensic report","content":"19:52 — Audit entries were altered using Leon Vale's privileged account. Original records show fabricated customer security approvals.","requires":["decrypt"],"needs_evidence":["e05"]},
+    {"id":"e08","title":"Maya's Voice Note","kind":"recording transcript","content":"Maya: 'I'm safe. I left by choice because Leon was erasing the proof. Alex helped copy the backup; Dana arranged somewhere safe. I never sent that resignation email.'","requires":["timeline"]}
+  ],
+  "puzzles": {
+    "decrypt": {"name":"The Rotated Message","instruction":"Decode the note's message using the clue on Maya's desk. What is the plaintext?","answer":"CHECK THE BACKUP"},
+    "timeline": {"name":"Reconstruct the Night","instruction":"Put these events in chronological order, earliest first.","events":[{"id":"audit","label":"Audit records changed — 19:52"},{"id":"email","label":"Resignation email — 20:05"},{"id":"camera","label":"Service stairwell — 21:40"},{"id":"badge","label":"Server-room access — 22:14"}],"answer":["audit","email","camera","badge"]}
+  },
+  "solution": {"responsible":"leon","required_evidence":["e02","e06","e08"],"summary":"Leon altered audit data and forged the resignation. Maya went into hiding voluntarily to protect the original evidence. Alex helped retrieve a backup; Dana helped Maya stay safe."}
+}
