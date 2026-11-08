@@ -1,27 +1,8 @@
-# Digital Detective — The Last Message
+# Digital Detective — Static Edition v0.6
 
-**An interactive mystery game with a deterministic investigation engine and an AI-ready dialogue layer.**
+A playable detective mystery built with **React + TypeScript + Vite**. A complete, deployable **static website** — no AI API, Docker, Python backend, database, accounts or secrets required.
 
-## Start with Docker
-
-```bash
-docker compose up --build
-```
-
-Open **http://localhost:5173**. API docs are at **http://localhost:8000/docs**.
-
-### Local development without Docker
-
-Backend (from repository root):
-
-```bash
-python -m venv .venv
-# activate .venv for your shell
-pip install -r backend/requirements.txt
-PYTHONPATH=backend uvicorn app.main:app --reload --port 8000
-```
-
-Frontend (a separate terminal):
+## Quick start
 
 ```bash
 cd frontend
@@ -29,79 +10,48 @@ npm install
 npm run dev
 ```
 
-The Vite proxy defaults to `http://localhost:8000` for local development; Docker Compose overrides it to `http://backend:8000`.
+Open the URL shown by Vite (usually http://localhost:5173).
 
-## Features in 0.1
+## Deploy to Vercel
 
-- Case 001 — *The Last Message*, 3 suspects, 8 evidence items, 2 puzzles.
-- Locked evidence gating and server-authoritative state.
-- Scripted witness interrogation with proof-driven contradictions.
-- SQLite persistence for each anonymous browser session.
-- Final verdict that checks all required evidence.
-- Automated backend tests and GitHub Actions CI.
+1. Commit this version on `feature/static-game-migration` and open a PR to `main`.
+2. On Vercel, import the **frontend** Vite app, not the former FastAPI backend.
+3. Select the folder containing `frontend/package.json` as **Root Directory** (usually `frontend`; some imports display a parent `digital-detective` folder, in which case pick `digital-detective/frontend`).
+4. Framework: **Vite**. Build command `npm run build`. Output directory: `dist`.
+5. No environment variables required. Deploy, then test a full investigation in an incognito browser.
+
+If using the `Import single project` tile for `frontend`, Vercel generally selects the right root and framework automatically.
+
+## Gameplay
+
+- **The Last Message:** 3 suspects, 8 evidence items, 2 forensic puzzles, final verdict.
+- **Branching interrogations:** each suspect has different scripted answers. New questions unlock when relevant evidence is collected; critical revelations require evidence.
+- **Witness state:** trust/pressure and transcript recorded for each character.
+- **Save system:** versioned browser `localStorage`; survives refreshes and tab changes in the same browser and origin. Reset case starts a new save.
+- **Tests:** `cd frontend && npm test && npm run build`.
 
 ## Architecture
 
-React / TypeScript (Vite) → REST API (FastAPI) → game rules → SQLite. `cases/case_001.json` is the content source. No AI provider is required at this stage; witness dialogue uses a deterministic adapter to make game testing reliable.
+`frontend/src/main.tsx` → `frontend/src/game/engine.ts` → `frontend/src/data/case001.json` / `characters.json` → browser `localStorage`.
 
-## Non-goals / known limitations
+No network requests are needed by the game logic. Fonts are loaded from Google Fonts if available; system fonts provide fallback when offline.
 
-- This MVP does **not** include an actual LLM integration, login, multiplayer, streaming chat, or security-hardened public deployment.
-- Session UUIDs in localStorage are anonymous identifiers, **not authentication**. Do not deploy the current write API publicly without rate limiting, authentication and further hardening.
-- Puzzle answers are validated server side; the case content file includes spoilers and should not be bundled directly into the browser.
-- Case data is fixed; the case creator will come in a later version.
+### Trade-offs
 
-## Tests
+- The complete case data, including puzzle answers and solution, is bundled into the browser. Players can inspect it using developer tools. This is acceptable for a **portfolio puzzle demo**, not a cheating-resistant paid game.
+- Saves are per browser/device and do not sync. Clearing browser storage deletes progress.
+- v0.5 SQLite saves are **not** migrated into browser storage. Existing development saves can remain in Docker volumes, but the static release starts a new case.
+- Trust and pressure are persisted and shown, but scripted lines are currently fixed per choice; they do not yet produce multiple tone variants for all emotional states.
 
-```bash
-pip install -r backend/requirements.txt
-PYTHONPATH=backend pytest -q backend/tests
-```
+## Suggested enhancements
 
-## Next milestones
+- Visual evidence board and pairwise deduction system
+- More dialogue branches and mood-dependent replies
+- Accessibility and E2E tests, save export/import
+- Case authoring schema and multiple investigations
 
-1. Make interrogations contextual using a constrained AI adapter and structured JSON outputs.
-2. Introduce content schema validation for custom cases.
-3. Add an evidence board, inventory-driven dialogue, hint engine, and end-to-end tests.
-4. Add auth, abuse controls, deployment, tracing and monitoring.
+## Git history
 
-All people and organizations in this game are fictional.
+The earlier AI / FastAPI / Docker prototype is preserved in Git history. The migration intentionally trades runtime AI for reliable, zero-setup public access.
 
-
-## Local AI interrogations (Ollama)
-
-This version is preconfigured for a model running on **the Windows host**, not inside Docker.
-
-1. Install Ollama on Windows and download: `ollama pull qwen3:4b`.
-2. Test from PowerShell: `ollama list` and `curl.exe http://localhost:11434/api/tags`.
-3. From the project directory: `docker compose up --build -d`.
-4. Visit `http://localhost:8000/api/ai-status` (should say `ollama`) and `http://localhost:5173` to interrogate witnesses.
-5. Monitor logs: `docker compose logs -f backend`. If Ollama can't be reached, the script falls back to fixed replies.
-
-If you use a different installed model, change `OLLAMA_MODEL` in `docker-compose.yml` to the exact name returned by `ollama list`. The first generated response can be slow.
-
-**Privacy and security:** This is a local-development prototype. Do not publish the dev ports to the public internet. The game engine controls clue unlocks and critical contradictions, but AI text can still hallucinate or spoil something. Before a public release, add content validation, authentication, rate limits, and secure deployment.
-
-## Faster, in-character local AI (v0.3)
-
-The dialogue adapter requests Ollama's native `/api/chat` endpoint with `think: false`, `keep_alive: 30m`, `num_predict: 75`, and `num_ctx: 2048`. It sends `/no_think` for Qwen3, ignores the `message.thinking` field, rejects obvious planning text, and uses the scripted fallback when the reply cannot be safely displayed. This is a best-effort guard, not a guarantee against all accidental reveals. Dialogue generation does not change case rules.
-
-After changing backend files, rebuild: `docker compose up --build -d`, then open http://localhost:5173. To inspect backend errors: `docker compose logs -f backend`. To check whether Ollama is running on GPU: `ollama ps` in Windows terminal.
-
-## Version 0.4 — persistent interview history
-
-The interrogation view now renders previously saved `state.interviews` separately for each character, so changing tabs, characters, or refreshing the page no longer removes the visible history. Existing interviews are loaded through `GET /api/state` using the browser's persistent session ID. The SQLite database lives in the named Docker volume `detective-data`, so avoid running `docker compose down -v` unless you intentionally want to erase progress. The Compose default model is now `qwen2.5:3b`; change it to your installed model if needed.
-
-To update an existing installation, copy the files over the old working tree (back it up first), then run `docker compose up -d --build`. Don't delete Docker volumes.
-
-## v0.5 — Character Intelligence
-
-- Each of Alex, Dana and Leon has separate personality, motivation, public knowledge, reveal gates, and dialogue style in `cases/characters.json` (server-only, never sent to the browser).
-- Character trust, pressure, mood, and interactions persist in SQLite per player session. Existing v0.4 sessions are upgraded automatically on read. The interrogation UI displays trust and pressure bars.
-- Evidence access remains authoritative in FastAPI. The dialogue model receives only authorized character facts; detective claims are not proof. Presenting evidence, repeating questions, being hostile, or showing empathy adjusts character state using deterministic rules (not AI guesses).
-- Critical contradictions are scripted. AI output is filtered best-effort and falls back to in-character scripted replies if unavailable or invalid. **Prompt filtering is not a formal secrecy guarantee.**
-- This version does not yet stream model tokens or provide a robust semantic contradiction checker.
-
-Update: back up your project, copy the updated source files over your existing working tree, then run `docker compose up -d --build`. Keep the existing Docker volume (`docker compose down -v` would erase it). Use `docker compose logs -f backend` to investigate Ollama failures.
-
-Suggested Git workflow: `git switch -c feature/character-intelligence`, update project files, test, then commit and open a PR. Do not commit `.db`, `.env`, or local Ollama models.
+All people, companies, and events are fictional.

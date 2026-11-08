@@ -1,14 +1,9 @@
 node_modules/
 dist/
-__pycache__/
-.pytest_cache/
-*.pyc
-*.db
 .env
-.DS_Store
-
-.venv/
 .env.*
 !.env.example
-*.sqlite
+*.db
 *.sqlite3
+.vite/
+coverage/
