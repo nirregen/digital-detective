@@ -93,3 +93,15 @@ After changing backend files, rebuild: `docker compose up --build -d`, then open
 The interrogation view now renders previously saved `state.interviews` separately for each character, so changing tabs, characters, or refreshing the page no longer removes the visible history. Existing interviews are loaded through `GET /api/state` using the browser's persistent session ID. The SQLite database lives in the named Docker volume `detective-data`, so avoid running `docker compose down -v` unless you intentionally want to erase progress. The Compose default model is now `qwen2.5:3b`; change it to your installed model if needed.
 
 To update an existing installation, copy the files over the old working tree (back it up first), then run `docker compose up -d --build`. Don't delete Docker volumes.
+
+## v0.5 — Character Intelligence
+
+- Each of Alex, Dana and Leon has separate personality, motivation, public knowledge, reveal gates, and dialogue style in `cases/characters.json` (server-only, never sent to the browser).
+- Character trust, pressure, mood, and interactions persist in SQLite per player session. Existing v0.4 sessions are upgraded automatically on read. The interrogation UI displays trust and pressure bars.
+- Evidence access remains authoritative in FastAPI. The dialogue model receives only authorized character facts; detective claims are not proof. Presenting evidence, repeating questions, being hostile, or showing empathy adjusts character state using deterministic rules (not AI guesses).
+- Critical contradictions are scripted. AI output is filtered best-effort and falls back to in-character scripted replies if unavailable or invalid. **Prompt filtering is not a formal secrecy guarantee.**
+- This version does not yet stream model tokens or provide a robust semantic contradiction checker.
+
+Update: back up your project, copy the updated source files over your existing working tree, then run `docker compose up -d --build`. Keep the existing Docker volume (`docker compose down -v` would erase it). Use `docker compose logs -f backend` to investigate Ollama failures.
+
+Suggested Git workflow: `git switch -c feature/character-intelligence`, update project files, test, then commit and open a PR. Do not commit `.db`, `.env`, or local Ollama models.
