@@ -1,57 +1,154 @@
-# Digital Detective — Static Edition v0.6
+<div align="center">
 
-A playable detective mystery built with **React + TypeScript + Vite**. A complete, deployable **static website** — no AI API, Docker, Python backend, database, accounts or secrets required.
+# 🕵️ Digital Detective
 
-## Quick start
+### Every clue matters. Every answer raises another question.
+
+**An interactive, browser-based detective mystery where you investigate suspects, uncover evidence, solve forensic puzzles, and piece together the truth.**
+
+[![Play the game](https://img.shields.io/badge/PLAY_THE_GAME-Live_Demo-36c6af?style=for-the-badge)](https://digital-detectivea.vercel.app/)
+[![React](https://img.shields.io/badge/React-TypeScript-3178C6?style=flat-square&logo=react&logoColor=white)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Built_with-Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://vercel.com/)
+
+**[▶ PLAY NOW](https://digital-detectivea.vercel.app/)** · **[Explore the source](https://github.com/nirregen/digital-detective)**
+
+*No sign-up. No installation. Just an investigation.*
+
+</div>
+
+---
+
+## 🔎 The case: *The Last Message*
+
+A software engineer at **Northstar Systems** disappears after a suspicious resignation email. Three colleagues tell different versions of what happened that night.
+
+You have the records. You have the suspects. But can you connect the evidence before reaching a verdict?
+
+> **Your mission:** investigate the disappearance, challenge contradictory statements, and support your conclusion with evidence.
+
+### What you can do
+
+- **Interrogate three suspects** through branching, character-specific dialogue.
+- **Uncover eight pieces of evidence** hidden behind investigation milestones.
+- **Solve two forensic puzzles** to unlock new information.
+- **Confront contradictions**: certain questions become available only after discovering relevant evidence.
+- **Track witness responses** with persistent dialogue history and character trust/pressure values.
+- **Resume your investigation** after refreshing or leaving the page, using local browser saves.
+- **Submit a final verdict** based on what you discovered.
+
+All characters, organizations, and events are fictional.
+
+## 🎮 Try it in your browser
+
+### [Launch Digital Detective →](https://digital-detectivea.vercel.app/)
+
+The game runs as a static web app. You don't need an account, a local server, Docker, or an AI API key.
+
+**Quick challenge:** Find a discrepancy in a suspect's timeline, then use the right evidence to unlock a new interrogation option.
+
+## 🛠️ Engineering highlights
+
+Digital Detective is more than a set of screens. It is a **data-driven investigation engine** with explicit rules for what players can discover and when.
+
+| Engineering area | Implementation |
+| --- | --- |
+| **State management** | Game progress, evidence, solved puzzles, witness transcripts, and verdict state |
+| **Rule-based dialogue** | Scripted branching choices with evidence-gated revelations |
+| **Game logic** | TypeScript engine validates puzzle progress and investigation conditions |
+| **Persistence** | Versioned `localStorage` saves, restored when the app reloads |
+| **Separation of concerns** | UI, game engine, and case content are organized separately |
+| **Quality and delivery** | Automated frontend tests, production build, and GitHub-based deployment |
+
+### Architecture
+
+```mermaid
+flowchart TD
+    A[Player in browser] --> B[React + TypeScript UI]
+    B --> C[Game Engine]
+    C --> D[Dialogue Rules]
+    C --> E[Evidence & Puzzle Rules]
+    D --> F[Case Data - JSON]
+    E --> F
+    C <--> G[Versioned localStorage save]
+```
+
+**Why this architecture?** An earlier prototype used FastAPI, SQLite, Docker, and locally hosted language models. For a portfolio game that anyone should be able to try instantly, I redesigned the runtime as a static React application. The result removes infrastructure dependencies and unpredictable AI responses while retaining structured investigation logic.
+
+The earlier prototype remains part of the repository's Git history and demonstrates the design evolution.
+
+## 💻 Tech stack
+
+- **Frontend:** React, TypeScript, Vite
+- **Game content:** JSON-driven cases and dialogue rules
+- **Storage:** browser `localStorage`
+- **Testing:** Vitest and GitHub Actions
+- **Deployment:** Vercel
+
+## 🚀 Run locally
+
+Requirements: Node.js and npm.
 
 ```bash
-cd frontend
+# Clone the repository
+git clone https://github.com/nirregen/digital-detective.git
+cd digital-detective/frontend
+
+# Install dependencies
 npm install
+
+# Start the development server
 npm run dev
 ```
 
-Open the URL shown by Vite (usually http://localhost:5173).
+Open the local URL printed by Vite (usually `http://localhost:5173`).
 
-## Deploy to Vercel
+```bash
+# Run automated tests
+npm run test
 
-1. Commit this version on `feature/static-game-migration` and open a PR to `main`.
-2. On Vercel, import the **frontend** Vite app, not the former FastAPI backend.
-3. Select the folder containing `frontend/package.json` as **Root Directory** (usually `frontend`; some imports display a parent `digital-detective` folder, in which case pick `digital-detective/frontend`).
-4. Framework: **Vite**. Build command `npm run build`. Output directory: `dist`.
-5. No environment variables required. Deploy, then test a full investigation in an incognito browser.
+# Build for production
+npm run build
+```
 
-If using the `Import single project` tile for `frontend`, Vercel generally selects the right root and framework automatically.
+No backend or environment variables are needed to run the **Static Edition**.
 
-## Gameplay
+## 🗂️ Project structure
 
-- **The Last Message:** 3 suspects, 8 evidence items, 2 forensic puzzles, final verdict.
-- **Branching interrogations:** each suspect has different scripted answers. New questions unlock when relevant evidence is collected; critical revelations require evidence.
-- **Witness state:** trust/pressure and transcript recorded for each character.
-- **Save system:** versioned browser `localStorage`; survives refreshes and tab changes in the same browser and origin. Reset case starts a new save.
-- **Tests:** `cd frontend && npm test && npm run build`.
+```text
+frontend/
+├── src/
+│   ├── game/           # Investigation rules, state, and persistence
+│   ├── data/           # Case facts, characters, and dialogue content
+│   └── ...             # React screens and interface components
+├── package.json
+└── ...
+.github/workflows/      # Automated checks
+README.md
+```
 
-## Architecture
+Legacy backend files may still be present in the repository for reference; the deployed static game does not depend on them.
 
-`frontend/src/main.tsx` → `frontend/src/game/engine.ts` → `frontend/src/data/case001.json` / `characters.json` → browser `localStorage`.
+## 🧭 Roadmap
 
-No network requests are needed by the game logic. Fonts are loaded from Google Fonts if available; system fonts provide fallback when offline.
+- [x] Case 001: *The Last Message*
+- [x] Evidence collection and forensic puzzles
+- [x] Evidence-gated branching dialogue
+- [x] Persistent browser saves
+- [x] Static deployment with a public demo
+- [ ] Visual evidence board for connecting clues
+- [ ] More dialogue branches and consequence-driven choices
+- [ ] Accessibility and end-to-end test coverage
+- [ ] More investigations and a reusable case-authoring format
 
-### Trade-offs
+## ⚖️ Design trade-offs
 
-- The complete case data, including puzzle answers and solution, is bundled into the browser. Players can inspect it using developer tools. This is acceptable for a **portfolio puzzle demo**, not a cheating-resistant paid game.
-- Saves are per browser/device and do not sync. Clearing browser storage deletes progress.
-- v0.5 SQLite saves are **not** migrated into browser storage. Existing development saves can remain in Docker volumes, but the static release starts a new case.
-- Trust and pressure are persisted and shown, but scripted lines are currently fixed per choice; they do not yet produce multiple tone variants for all emotional states.
+- **Browser-only saves:** Progress persists in the same browser, but does not sync across devices or survive clearing site data.
+- **Static case data:** Puzzle solutions are included in the browser bundle and can be inspected by technically inclined players. This is an intentional trade-off for a frictionless portfolio demo.
+- **Deterministic dialogue:** Scripted responses prioritize coherence and reliable gameplay over unrestricted AI-generated conversation.
 
-## Suggested enhancements
+## 👨‍💻 About this project
 
-- Visual evidence board and pairwise deduction system
-- More dialogue branches and mood-dependent replies
-- Accessibility and E2E tests, save export/import
-- Case authoring schema and multiple investigations
+I built Digital Detective to practice designing an interactive product end to end: from game rules and state management to testing, deployment, and technical trade-offs. It continues to evolve through incremental features and documented improvements.
 
-## Git history
-
-The earlier AI / FastAPI / Docker prototype is preserved in Git history. The migration intentionally trades runtime AI for reliable, zero-setup public access.
-
-All people, companies, and events are fictional.
+**[Play the live demo](https://digital-detectivea.vercel.app/)** · **[View repository](https://github.com/nirregen/digital-detective)**
